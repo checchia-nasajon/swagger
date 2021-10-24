@@ -1,0 +1,197 @@
+tags:
+- "routing"
+summary: "Calculate the routing of the given input locations and vehicles"
+description: ""
+operationId: "routing"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+parameters:
+- in: "body"
+  name: "body"
+  description: "System parameters and a list of locations and vehicles"
+  required: true
+  schema:
+    $ref: "#/definitions/Routing"
+responses:
+  "200":
+    description: "Solution found"
+    schema:
+      $ref: "#/definitions/ApiResponse"
+
+definitions:
+  TimeWindow:
+    type: "object"
+    properties:
+      start:
+        type: "integer"
+        format: "int64"
+        example: 600
+        description: "Start of the delivery time window"
+      end:
+        type: "integer"
+        format: "int64"
+        example: 660
+        description: "End of the delivery time window"
+  LunchTimeWindow:
+    type: "object"
+    properties:
+      minimum_start:
+        type: "integer"
+        format: "int64"
+        example: 660
+        description: "Minimum time to start the lunch break, 11h on the example."
+      maximum_start:
+        type: "integer"
+        format: "int64"
+        example: 840
+        description: "Maximum time to start the lunch break, 14h on the example."
+      duration:
+        type: "integer"
+        format: "int64"
+        example: 60
+        description: "Lunch break duration, 1h on the example."
+  ShortBreak:
+    type: "object"
+    properties:
+      frequency:
+        type: "integer"
+        format: "int64"
+        example: 180
+        description: "Frequency with which short break occurs. On the example, the vehicle should take a break every 3h"
+      duration:
+        type: "integer"
+        format: "int64"
+        example: 15
+        description: "Break duration, 15 min on the example"
+  Distance:
+    type: "object"
+    required:
+    - "name"
+    - "distance"
+    properties:
+      name:
+        type: "string"
+        example: "Address B"
+        description: "Distance to Location Address B"
+      distance:
+        type: "integer"
+        format: "int64"
+        example: 20
+  Location:
+    type: "object"
+    required:
+    - "name"
+    - "demand"
+    - "distances"
+    - "service_time"
+    - "accessibility"
+    properties:
+      name:
+        type: "string"
+        example: "Depot D"
+        description: "Name identifier"
+      demand:
+        type: "integer"
+        format: "int64"
+        example: 100
+        description: "Demand to delivery"
+      service_time:
+        type: "integer"
+        format: "int64"
+        example: 10
+        description: "Time it takes to do the service. E.g: Unload time"
+      is_depot:
+        type: "boolean"
+        example: true
+        default: false
+        description: "Flag to set this location as depot"
+      high_priority:
+        type: "boolean"
+        example: false,
+        default: false,
+        description: "Set the location as high priority for delivery, the search algorithm will do everything possible to include this location. This flag set the penalty of not delivering to this location to 'infinity'"
+      time_windows:
+        type: "array"
+        description: "List of delivery time windows on the location. All day if not specified"
+        items:
+          $ref: "#/definitions/TimeWindow"
+      distances:
+        type: "array"
+        description: "List of distances to every other location on the same zone. Distance is set to infinity if not specified"
+        items:
+          $ref: "#/definitions/Distance"
+      accessibility:
+        type: "array"
+        description: "Accessibility list. Vehicles not included in this list are not allowed to serve the location. All vehicles types if not specified"
+        items:
+          type: "string"
+          example: "small_vechile"
+  Vehicle:
+    type: "object"
+    required:
+    - "name"
+    - "max_load_weight"
+    - "types"
+    - "journey"
+    properties:
+      name:
+        type: "string"
+        example: "Vehicle V"
+        description: "Name identifier"
+      max_load_weight:
+        type: "integer"
+        example: 4000
+        description: "Max load the vehicle can transport"
+      types:
+        type: "array"
+        description: "Types of the vehicle, this is the constraint on location accessibility"
+        items:
+          type: "string"
+          example: "small_vechile"
+      journey:
+        type: "integer"
+        example: 540
+        default: 540
+        description: "The vehicle maximum journey time. Vehicle max cumulative time is journey. Lunch break duration or any other break must be added. 9 hours journey (8h + 1h lunch duration) in the example."
+      lunch_time_window:
+        $ref: "#/definitions/LunchTimeWindow"
+      short_break:
+        $ref: "#/definitions/ShortBreak"
+  Routing:
+    id: "Routing"
+    type: "object"
+    required:
+    - "locations"
+    - "vehicles"
+    properties:
+      max_reload: 
+        type: "integer"
+        example: 2
+        description: "Maximum number of time the vehicle can reload at depot. Keep this close to the minimum"
+      drop_penalty_type:
+        type: "string"
+        example: "Distancia Deposito"
+        description: "Penalty that is used if not delivering at a location"
+        enum:
+        - "Distancia Deposito"
+      search_time_limit:
+        type: "integer"
+        example: 15
+        description: "Duration of the search is seconds. The API will take this time to respond"
+      locations:
+        type: "array"
+        items:
+          $ref: "#/definitions/Location"
+      vehicles:
+        type: "array"
+        items:
+          $ref: "#/definitions/Vehicle"
+  ApiResponse:
+    type: "object"
+    properties:
+      status:
+        type: "string"
+      message:
+        type: "string"

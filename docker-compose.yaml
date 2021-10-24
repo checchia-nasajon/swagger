@@ -1,0 +1,10 @@
+version: '3'
+services:
+    app:
+        build:
+            context: .
+        volumes:
+            - .:/app
+        command: gunicorn --bind 0.0.0.0:5000 routing:app
+        ports:
+        - 5000:5000

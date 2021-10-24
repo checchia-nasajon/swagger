@@ -1,0 +1,93 @@
+search_time_limit: 15
+distance_type: Minuto
+locations:
+  - name: Deposito
+    is_depot: true
+    demand: 0
+    service_time: 0
+    time_windows:
+      - start: 390
+        end: 1260
+    accessibility: 
+      - Carro
+      - Moto
+    distances:
+      - name: Ponto Dois
+        distance: 132
+      - name: Ponto Tres
+        distance: 78
+      - name: Ponto Quatro
+        distance: 160
+  - name: Ponto Dois
+    demand: 2
+    service_time: 30
+    time_windows:
+      - start: 360
+        end: 720
+      - start: 840
+        end: 1020
+    accessibility: 
+      - Carro
+    distances:
+      - name: Deposito
+        distance: 228
+      - name: Ponto Tres
+        distance: 193
+      - name: Ponto Quatro
+        distance: 120
+  - name: Ponto Tres
+    demand: 1
+    service_time: 20
+    time_windows:
+      - start: 600
+        end: 840
+    accessibility: 
+      - Moto
+    distances:
+      - name: Deposito
+        distance: 69
+      - name: Ponto Dois
+        distance: 246
+      - name: Ponto Quatro
+        distance: 120
+  - name: Ponto Quatro
+    demand: 2
+    service_time: 50
+    time_windows:
+      - start: 780
+        end: 1020
+    accessibility: 
+      - Carro
+      - Moto
+    distances:
+      - name: Deposito
+        distance: 60
+      - name: Ponto Dois
+        distance: 96
+      - name: Ponto Tres
+        distance: 126
+vehicles:
+  - name: Lambreta
+    types:
+    - Moto
+    max_load_weight: 5
+    journey: 480
+    lunch_time_window:
+      minimum_start: 0
+      maximum_start: 600
+      duration: 0
+    short_break:
+      frequency: 180
+      duration: 15
+  - name: Corsa
+    types:
+    - Carro
+    max_load_weight: 3
+    journey: 480
+    lunch_time_window:
+      minimum_start: 0
+      maximum_start: 600
+      duration: 0
+    short_break:
+      frequency: 180
+      duration: 15

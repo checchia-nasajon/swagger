@@ -1,0 +1,37 @@
+node('aws-codebuild') {
+
+   stage('Fetch') {
+        timeout(time: 60, unit: 'SECONDS') {
+            checkout scm
+        }
+    }
+
+    // def PLAYBOOK = "/opt/devops/Ansible/ci.yml"
+    def buildName = (env.BRANCH_NAME != 'production') ? "${env.BRANCH_NAME}-${BUILD_NUMBER}" : "${BUILD_NUMBER}"
+    
+    stage('Environment Config') {
+        sh "auto_config"
+    }	
+
+    // stage('Config') {
+    //     sh 'cp common.env.dist common.env'
+    // }
+
+    stage('Docker Ship') {
+		sh "sudo docker build --no-cache --rm -t hub.nasajon.com.br/otimizador:${buildName} ."
+		sh "sudo docker push hub.nasajon.com.br/otimizador:${buildName}"
+		sh "sudo docker rmi -f hub.nasajon.com.br/otimizador:${buildName}"
+	}
+ 
+    // if (env.BRANCH_NAME == 'master') {
+	//     stage('Deploy QA'){
+    //         sh "ansible-playbook ${PLAYBOOK} -e 'build_path=${WORKSPACE} env=qa'"
+    //     }
+    // }
+	
+    // if (env.BRANCH_NAME == 'production') {
+	//     stage('Deploy PROD'){
+    //         sh "ansible-playbook ${PLAYBOOK} -e 'build_path=${WORKSPACE} env=prod'"
+    //     }
+    // }
+}
