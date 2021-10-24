@@ -9,9 +9,9 @@ node('aws-codebuild') {
      def PLAYBOOK = "/opt/devops/Ansible/ci.yml"
     def buildName = (env.BRANCH_NAME != 'production') ? "${env.BRANCH_NAME}-${BUILD_NUMBER}" : "${BUILD_NUMBER}"
     
-    stage('Environment Config') {
-        sh "auto_config"
-    }	
+//    stage('Environment Config') {
+//        sh "auto_config"
+//    }	
 
      stage('Config') {
          sh 'cp common.env.dist common.env'
