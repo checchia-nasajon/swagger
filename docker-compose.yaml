@@ -5,6 +5,6 @@ services:
             context: .
         volumes:
             - .:/app
-        command: gunicorn --bind 0.0.0.0:5000 routing:app
+        command: gunicorn --bind 0.0.0.0:8080 routing:app
         ports:
-        - 5000:5000
+        - 8080:8080
