@@ -8,7 +8,8 @@ ENV PORT 8080
 ENV BASE_URL ""
 ENV SWAGGER_JSON_URL ""
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-RUN addgroup --system app && adduser --system --group app
+RUN addgroup --system app 
+RUN adduser --system --group app
 RUN apk update && apk add --no-cache "nodejs>=14.17.6-r0"
 USER app
 ENV PATH="$PATH:/home/app/.local/bin"
